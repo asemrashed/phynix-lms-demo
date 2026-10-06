@@ -10,6 +10,7 @@ import { LandingContainer } from "@/components/home/landing-container"
 import type { PlatformStats, PublicHomepageSection } from "@fxprime/types"
 import { api } from "@/lib/api"
 import { mergeHomepageSection } from "@/lib/site-content-defaults"
+import heroImage from "@/public/hero.png"
 
 interface HeroSectionProps {
   stats?: PlatformStats | null
@@ -53,11 +54,15 @@ export function HeroSection({ stats: externalStats, statsLoading, section }: Her
                 <>
                   Master{" "}
                   <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    English
+                    New Skills
                   </span>{" "}
                   with{" "}
                   <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                    Expert-Led Preparation
+                    Expert-Led 
+                  </span>
+                  <br/>
+                  <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                    Preparation
                   </span>
                 </>
               ) : (
@@ -95,18 +100,14 @@ export function HeroSection({ stats: externalStats, statsLoading, section }: Her
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-md lg:max-w-lg">
-              <div className="relative h-full w-full overflow-hidden rounded-[32px] bg-gradient-to-br from-primary/20 to-accent/20 p-1">
-                <div className="h-full w-full overflow-hidden rounded-[28px] bg-card">
-                  <Image
-                    src={process.env.NEXT_PUBLIC_HERO_IMAGE_URL || "/Heor-Image.jpeg"}
+            <div className="relative mx-auto aspect-[4/4] w-full max-w-md lg:max-w-lg">
+              <Image
+                    src={process.env.NEXT_PUBLIC_HERO_IMAGE_URL || heroImage}
                     alt="English preparation and education"
                     fill
-                    className="object-cover"
+                    className="object-fit rounded-2xl shadow-lg"
                     priority
-                  />
-                </div>
-              </div>
+                />
 
               {/* <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
