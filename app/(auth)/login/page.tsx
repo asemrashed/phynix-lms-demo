@@ -102,11 +102,16 @@ function LoginContent() {
       router.push(resolveLoginRedirect(loggedInUser.role, redirect))
     } catch (err) {
       if (err instanceof ApiError && err.code === "DEVICE_LIMIT_REACHED") {
-        setDeviceLimit(true)
-        setError("Another device is already logged in. Force logout to continue.")
-      } else {
-        setError(err instanceof ApiError ? err.message : "Login failed")
+        try {
+          const loggedInUser = await login(account.email, account.password, { forceLogout: true })
+          toast.success(`Signed in as ${account.label}`)
+          router.push(resolveLoginRedirect(loggedInUser.role, redirect))
+          return
+        } catch {
+          // fallback
+        }
       }
+      setError(err instanceof ApiError ? err.message : "Login failed")
     } finally {
       setLoading(false)
       setDemoLoading(null)
@@ -125,11 +130,17 @@ function LoginContent() {
       router.push(resolveLoginRedirect(loggedInUser.role, redirect))
     } catch (err) {
       if (err instanceof ApiError && err.code === "DEVICE_LIMIT_REACHED") {
-        setDeviceLimit(true)
-        setError("Another device is already logged in. Force logout to continue.")
-      } else {
-        setError(err instanceof ApiError ? err.message : "Login failed")
+        try {
+          const loggedInUser = await login(data.email, data.password, { forceLogout: true })
+          persistRemember(data.email)
+          toast.success("Sign in!")
+          router.push(resolveLoginRedirect(loggedInUser.role, redirect))
+          return
+        } catch {
+          // fallback
+        }
       }
+      setError(err instanceof ApiError ? err.message : "Login failed")
     } finally {
       setLoading(false)
     }

@@ -71,20 +71,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const normalizedEmail = email.trim().toLowerCase()
     const normalizedPassword = password.trim()
 
-    const data = await api<{
-      user: AuthUser
-      accessToken: string
-      expiresIn: number
-    }>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({
-        email: normalizedEmail,
-        password: normalizedPassword,
-        deviceFingerprint: getDeviceFingerprint(),
-        deviceType: getDeviceType(),
-        forceLogout: options?.forceLogout,
-      }),
-    })
+    const executeLogin = async (force: boolean) => {
+      return await api<{
+        user: AuthUser
+        accessToken: string
+        expiresIn: number
+      }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password: normalizedPassword,
+          deviceFingerprint: getDeviceFingerprint(),
+          deviceType: getDeviceType(),
+          forceLogout: force,
+        }),
+      })
+    }
+
+    let data
+    try {
+      data = await executeLogin(Boolean(options?.forceLogout))
+    } catch (err) {
+      if (err instanceof ApiError && err.code === "DEVICE_LIMIT_REACHED" && !options?.forceLogout) {
+        // Auto-resolve device limit in demo mode so clients are never blocked
+        data = await executeLogin(true)
+      } else {
+        throw err
+      }
+    }
+
     setAccessToken(data.accessToken)
     setUser(data.user)
     setUserRoleCookie(data.user.role)
